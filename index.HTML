@@ -7,31 +7,55 @@
     <title>Leitor QRcode</title>
 </head>
 <body>
-<header>
-    <div class="cabecalho">
-        <img src="/iconx.png" alt="" style="width: 120px; ">
-    </div>
-</header><br>
+    <header>
+        <div class="cabecalho">
+            <img src="/iconx.png" alt="" style="width: 120px;">
+        </div>
+    </header><br>
     <div>
         <h1>VALIDADOR DE PRESENÇA DOS TREINAMENTOS - BASES SAMU</h1>
         <img src="/Samu-logo.png" alt="" style="width: 90px; margin: 0 130px;">
     </div>
-
     
+    <!-- Adicionando a biblioteca do QR Code -->
     <script src="html5-qrcode.min.js"></script>
-    <div id="reader"></div>
-
-    <script>
-        function onScanSuccess(decodedText, decodedResult) {
-        // Handle on success condition with the decoded text or result.
-        console.log(`Scan result: ${decodedText}`, decodedResult);
-
-        html5QrcodeScanner.clear();
-    }
     
-    var html5QrcodeScanner = new Html5QrcodeScanner(
-        "reader", { fps: 10, qrbox: 250 });
-    html5QrcodeScanner.render(onScanSuccess);
+    <!-- Div onde o leitor será renderizado -->
+    <div id="reader"></div>
+    <p id="status" class="loading">Aguardando leitura do QR code...</p>
+    
+    <script>
+        // Função chamada ao escanear com sucesso
+        function onScanSuccess(decodedText, decodedResult) {
+            // Feedback ao usuário
+            document.getElementById('status').innerHTML = `QR code lido com sucesso: ${decodedText}`;
+            document.getElementById('status').className = "success";
+    
+            // Limpar o scanner após a leitura
+            html5QrcodeScanner.clear();
+        }
+    
+        // Função chamada ao falhar no escaneamento
+        function onScanFailure(error) {
+            // Exibe o erro no console para depuração
+            console.warn(`Erro ao ler QR code: ${error}`);
+            document.getElementById('status').innerHTML = "Erro na leitura, tente novamente.";
+            document.getElementById('status').className = "error";
+        }
+    
+        // Inicializa o scanner com mais opções
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            {
+                fps: 15, // Frames por segundo, aumenta a taxa de leitura
+                qrbox: { width: 300, height: 300 }, // Tamanho da área de leitura, ajustável
+                aspectRatio: 1.0, // Proporção da câmera, você pode ajustar conforme necessário
+                disableFlip: false // Não desativar o espelhamento (melhor para dispositivos móveis)
+            }
+        );
+    
+        // Renderiza o scanner
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     </script>
 </body>
 </html>
