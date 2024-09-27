@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="x-icon" href="/iconx.png">
+    <link rel="x-icon" href="/iconx.png">
     <link rel="stylesheet" href="style.css">
     <title>Leitor QRcode</title>
 </head>
@@ -25,12 +25,21 @@
     <div id="reader"></div>
     <p id="status" class="loading">Aguardando leitura do QR code...</p>
     
+    <!-- Botões que aparecem após a leitura -->
+    <div id="action-buttons" style="display: none;">
+        <button onclick="adicionarPresenca()">Adicionar Presença</button>
+        <button onclick="lerOutroQRCode()">Ler Outro QR Code</button>
+    </div>
+    
     <script>
         // Função chamada ao escanear com sucesso
         function onScanSuccess(decodedText, decodedResult) {
             // Feedback ao usuário
             document.getElementById('status').innerHTML = `QR code lido com sucesso: ${decodedText}`;
             document.getElementById('status').className = "success";
+    
+            // Exibir os botões de ação
+            document.getElementById('action-buttons').style.display = "block";
     
             // Limpar o scanner após a leitura
             html5QrcodeScanner.clear();
@@ -57,6 +66,19 @@
     
         // Renderiza o scanner
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    
+        // Função chamada ao clicar em "Adicionar Presença"
+        function adicionarPresenca() {
+            alert("Presença adicionada com sucesso!");
+        }
+    
+        // Função chamada ao clicar em "Ler Outro QR Code"
+        function lerOutroQRCode() {
+            document.getElementById('status').innerHTML = "Aguardando leitura do QR code...";
+            document.getElementById('status').className = "loading";
+            document.getElementById('action-buttons').style.display = "none";
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        }
     </script>
 </body>
 </html>
