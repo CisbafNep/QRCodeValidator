@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Leitor QRcode</title>
+</head>
+<body>
+<header>
+    <div class="cabecalho">
+        <img src="/iconx.png" alt="" style="width: 120px; ">
+    </div>
+</header><br>
+    <div>
+        <h1>VALIDADOR DE PRESENÇA DOS TREINAMENTOS - BASES SAMU</h1>
+        <img src="/Samu-logo.png" alt="" style="width: 90px; margin: 0 130px;">
+    </div>
+
+    <script src="html5-qrcode.min.js"></script>
+    <div id="reader"></div>
+
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+        // Handle on success condition with the decoded text or result.
+        console.log(`Scan result: ${decodedText}`, decodedResult);
+
+        html5QrcodeScanner.clear();
+    }
+    
+    var html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
+    </script>
+</body>
+</html>
