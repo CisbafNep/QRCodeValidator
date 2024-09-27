@@ -9,7 +9,7 @@
 <body>
 <header>
     <div class="cabecalho">
-        <img src="/iconx.png" alt="" style="width: 120px;">
+        <img src="/iconx.png" alt="" style="width: 120px; ">
     </div>
 </header><br>
     <div>
@@ -17,28 +17,21 @@
         <img src="/Samu-logo.png" alt="" style="width: 90px; margin: 0 130px;">
     </div>
 
-    <!-- Adicionando a biblioteca do QR Code de uma CDN -->
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-
-    <!-- Div onde o leitor será renderizado -->
-    <div id="reader" style="width: 100%; max-width: 500px; margin: auto;"></div>
+    
+    <script src="html5-qrcode.min.js"></script>
+    <div id="reader"></div>
 
     <script>
         function onScanSuccess(decodedText, decodedResult) {
-            alert(`Resultado escaneado: ${decodedText}`);
-            console.log(`Scan result: ${decodedText}`, decodedResult);
-            html5QrcodeScanner.clear();
-        }
+        // Handle on success condition with the decoded text or result.
+        console.log(`Scan result: ${decodedText}`, decodedResult);
 
-        function onScanFailure(error) {
-            console.warn(`Falha no scan: ${error}`);
-        }
-
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", 
-            { fps: 10, qrbox: 250 }
-        );
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        html5QrcodeScanner.clear();
+    }
+    
+    var html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
     </script>
 </body>
 </html>
