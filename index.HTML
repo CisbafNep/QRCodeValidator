@@ -5,136 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Leitor QRcode</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        #reader {
-            width: 100%;
-            max-width: 500px;
-            margin: auto;
-        }
-        #status {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        #status.loading {
-            color: orange;
-        }
-        #status.success {
-            color: green;
-        }
-        #status.error {
-            color: red;
-        }
-        #confirm-button {
-            display: none;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        #confirm-button:hover {
-            background-color: #218838;
-        }
-    </style>
 </head>
 <body>
-<header>
-    <div class="cabecalho">
-        <img src="/iconx.png" alt="" style="width: 120px;">
+    <header>
+        <div class="cabecalho">
+            <img src="/iconx.png" alt="" style="width: 120px;">
+        </div>
+    </header><br>
+    <div>
+        <h1>VALIDADOR DE PRESENÇA DOS TREINAMENTOS - BASES SAMU</h1>
+        <img src="/Samu-logo.png" alt="" style="width: 90px; margin: 0 130px;">
     </div>
-</header><br>
-<div>
-    <h1>VALIDADOR DE PRESENÇA DOS TREINAMENTOS - BASES SAMU</h1>
-    <img src="/Samu-logo.png" alt="" style="width: 90px; margin: 0 130px;">
-</div>
-
-<!-- Adicionando a biblioteca do QR Code -->
-<script src="html5-qrcode.min.js"></script>
-
-<!-- Div onde o leitor será renderizado -->
-<div id="reader"></div>
-<p id="status" class="loading">Aguardando leitura do QR code...</p>
-
-<!-- Botão para confirmar presença -->
-<button id="confirm-button" onclick="confirmarPresenca()">Confirmar Presença</button>
-
-<script>
-    let scannedCode = ""; // Variável global para armazenar o código lido
-
-    // Função chamada ao escanear com sucesso
-    function onScanSuccess(decodedText, decodedResult) {
-        // Armazenar o código lido
-        scannedCode = decodedText;
-
-        // Exibir mensagem de sucesso
-        document.getElementById('status').innerHTML = `QR code lido com sucesso: ${decodedText}`;
-        document.getElementById('status').className = "success";
-
-        // Exibir o botão de confirmação
-        document.getElementById('confirm-button').style.display = "inline-block";
-    }
-
-    // Função chamada ao falhar no escaneamento
-    function onScanFailure(error) {
-        console.warn(`Erro ao ler QR code: ${error}`);
-        document.getElementById('status').innerHTML = "Erro na leitura, tente novamente.";
-        document.getElementById('status').className = "error";
-    }
-
-    // Função para confirmar a presença
-    async function confirmarPresenca() {
-        if (!scannedCode) {
-            alert("Nenhum QR code foi escaneado ainda.");
-            return;
+    
+    <!-- Adicionando a biblioteca do QR Code -->
+    <script src="html5-qrcode.min.js"></script>
+    
+    <!-- Div onde o leitor será renderizado -->
+    <div id="reader"></div>
+    <p id="status" class="loading">Aguardando leitura do QR code...</p>
+    
+    <script>
+        // Função chamada ao escanear com sucesso
+        function onScanSuccess(decodedText, decodedResult) {
+            // Feedback ao usuário
+            document.getElementById('status').innerHTML = `QR code lido com sucesso: ${decodedText}`;
+            document.getElementById('status').className = "success";
+    
+            // Limpar o scanner após a leitura
+            html5QrcodeScanner.clear();
         }
-
-        // Dados a serem enviados para o backend (inclua o que for necessário)
-        const data = {
-            code: scannedCode,  // QR code escaneado
-            timestamp: new Date().toISOString() // Registro do horário
-        };
-
-        try {
-            const response = await fetch("https://samu-acompanhamento-bases.vercel.app/nilopBase.html", {
-                method: "POST",  // Mude para POST se o backend aceita esse método
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                document.getElementById('status').innerHTML = `Presença confirmada: ${result.message}`;
-                document.getElementById('status').className = "success";
-                alert("Presença registrada com sucesso!");
-            } else {
-                throw new Error("Erro ao registrar presença.");
-            }
-        } catch (error) {
-            console.error("Erro:", error);
-            document.getElementById('status').innerHTML = "Erro ao confirmar presença.";
+    
+        // Função chamada ao falhar no escaneamento
+        function onScanFailure(error) {
+            // Exibe o erro no console para depuração
+            console.warn(`Erro ao ler QR code: ${error}`);
+            document.getElementById('status').innerHTML = "Erro na leitura, tente novamente.";
             document.getElementById('status').className = "error";
         }
-    }
-
-    // Inicializa o scanner de QR code
-    let html5QrcodeScanner = new Html5QrcodeScanner(
-        "reader", 
-        {
-            fps: 15, // Frames por segundo
-            qrbox: { width: 300, height: 300 }, // Tamanho da área de leitura
-            aspectRatio: 1.0, 
-            disableFlip: false
-        }
-    );
-
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-</script>
+    
+        // Inicializa o scanner com mais opções
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            {
+                fps: 15, // Frames por segundo, aumenta a taxa de leitura
+                qrbox: { width: 300, height: 300 }, // Tamanho da área de leitura, ajustável
+                aspectRatio: 1.0, // Proporção da câmera, você pode ajustar conforme necessário
+                disableFlip: false // Não desativar o espelhamento (melhor para dispositivos móveis)
+            }
+        );
+    
+        // Renderiza o scanner
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    </script>
 </body>
 </html>
